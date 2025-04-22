@@ -1,0 +1,8 @@
+names:
+  0: line
+  1: barrel
+  2: traffic-barrel
+  3: grass
+path: .
+train: igvc-annotated/Train.txt
+val: igvc-annotated/Validation.txt
