@@ -151,9 +151,12 @@ for idx, image_name in enumerate(image_names):
             filtering_time_mask_ms = (filtering_time_mask_end - filtering_time_mask_start) * 1000
             filtering_time_ms += filtering_time_mask_ms # accumulate time
 
-            # Add line to the mask
             if class_id == 0:
+                # Add line to the mask
                 line_mask[mask == 1] = 255
+            else:
+                # Remove portions of the line mask that overlap with other detections
+                line_mask[mask == 1] = 0
 
             # Apply the solid mask color directly to the image
             color = colors[class_id % len(colors)]  # Assign a color based on the class ID
