@@ -1,0 +1,15 @@
+# Ingore training runs except for train29
+runs/segment/*
+!runs/segment/train29/
+!runs/segment/train29/**
+
+# Ignore large inputs
+img_resized/*
+
+# Ignore large outputs
+img_seg/*
+segmentation_results.mp4
+
+# Ignore pretrained YOLO (downloaded automatically by training script)
+yolo11s.pt
+yolo11n.pt
