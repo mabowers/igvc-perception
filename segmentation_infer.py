@@ -186,7 +186,8 @@ for idx, image_name in enumerate(image_names):
 
     # Save the image with masks overlaid
     seg_output_path = os.path.join(seg_output_folder, f"seg_{idx:04d}.png")
-    cv2.imwrite(seg_output_path, image)
+    image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    cv2.imwrite(seg_output_path, image_rgb)
 
     # Resize images to fit the video frame dimensions
     original_resized = cv2.resize(original_image, (frame_width // 2, frame_height))
@@ -195,8 +196,8 @@ for idx, image_name in enumerate(image_names):
     # Concatenate the original and segmented images side by side
     side_by_side = np.concatenate((original_resized, segmented_resized), axis=1)
 
-    # Convert RGB to BGR for OpenCV video writer
-    side_by_side_bgr = cv2.cvtColor(side_by_side, cv2.COLOR_RGB2BGR)
+    # Convert BGR to RGB for OpenCV video writer
+    side_by_side_bgr = cv2.cvtColor(side_by_side, cv2.COLOR_BGR2RGB)
 
     # Write the frame to the video
     video_writer.write(side_by_side_bgr)
