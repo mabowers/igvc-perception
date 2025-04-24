@@ -1,0 +1,59 @@
+#
+# Copyright (c) 2025 Mark A. Bowers
+# All rights reserved.
+#
+# IGVC Perception Project
+# https://github.com/mabowers/igvc-perception
+# ECE5532 Autonomous Vehicle Systems I, Winter 2025
+# Oakland University, Rochester, MI
+# Instructor: Dr. Micho Radovnikovich
+#
+# Global Costmap Parameters file
+#
+# This file is based on the following example from the course materials:
+# https://github.com/robustify/winter2025_ece5532_examples/blob/master/maze_world_nav/yaml/global_costmap_params.yaml
+#
+
+global_frame: map
+robot_base_frame: base_footprint
+robot_radius: 0.435 # Mantis' worst-case radius
+
+update_frequency: 2
+publish_frequency: 1
+rolling_window: false
+
+width: 110
+height: 110
+resolution: 0.05
+origin_x: -50
+origin_y: -50
+
+plugins:
+  - {name: obstacles, type: "costmap_2d::ObstacleLayer"}
+  - {name: inflation, type: "costmap_2d::InflationLayer"}
+
+obstacles:
+  obstacle_range: 3
+  raytrace_range: 3.5
+
+  observation_sources: lidar_scan line_mask_pointcloud
+
+  lidar_scan:
+    topic: /scan
+    sensor_frame: laser
+    data_type: LaserScan
+    marking: true
+    clearing: true
+
+  line_mask_pointcloud:
+    topic: /line_mask_pointcloud
+    sensor_frame: base_footprint
+    data_type: PointCloud
+    marking: true
+    clearing: false
+
+
+inflation:
+  inflation_radius: 1.01
+  cost_scaling_factor: 0.2
+

@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+
+<!--
+Copyright (c) 2025 Mark A. Bowers
+All rights reserved.
+
+IGVC Perception Project
+https://github.com/mabowers/igvc-perception
+ECE5532 Autonomous Vehicle Systems I, Winter 2025
+Oakland University, Rochester, MI
+Instructor: Dr. Micho Radovnikovich
+
+ROS launch file to start the system for the IGVC Perception project.
+
+This file is based on the following examples from the course materials:
+https://github.com/robustify/ece5532_project_ideas/blob/master/igvc_bag_processing/launch/start_system.launch
+https://github.com/robustify/winter2025_ece5532_examples/blob/master/gnss_ekf_example/launch/gnss_ekf_example.launch
+https://github.com/robustify/winter2025_ece5532_examples/blob/master/opencv_example/launch/hough_transform_example.launch
+-->
+
+<launch>
+
+    <!-- Use time from bag file -->
+    <param name="use_sim_time" value="true" />
+
+    <!-- reference GPS points -->
+    <arg name="ref_lat" default="42.6794081" />
+    <arg name="ref_lon" default="-83.1956015" />
+
+    <!-- Static TF transforms between vehicle frame and the LIDAR and camera frames -->
+    <node pkg="tf2_ros" type="static_transform_publisher" name="footprint_to_laser" args="0.165 0.000 0.507 0 0 0 1 base_footprint laser" />
+    <node pkg="tf2_ros" type="static_transform_publisher" name="footprint_to_camera" args="-0.102 0.073 1.544 0.657 -0.629 0.289 -0.299 base_footprint stereo_left" />
+
+    <!-- RViz configuration to visualize the sensor data -->
+    <node pkg="rviz" type="rviz" name="sensor_viz" args="-d $(find igvc_perception)/rviz/sensor_viz.rviz" />
+
+    <!-- GNSS EKF Node -->
+    <node pkg="igvc_perception" type="gnss_ekf_node" name="gnss_ekf_node">
+        <param name="ref_lat" value="$(arg ref_lat)" />
+        <param name="ref_lon" value="$(arg ref_lon)" />
+    </node>
+
+    <!-- "move_base" node for ROS Navigation Stack -->
+    <node pkg="move_base" type="move_base" name="move_base" output="screen">
+        <rosparam file="$(find igvc_perception)/yaml/global_planner_params.yaml" ns="NavfnROS" />
+        <rosparam file="$(find igvc_perception)/yaml/global_costmap_params.yaml" ns="global_costmap" />
+        <rosparam file="$(find igvc_perception)/yaml/local_costmap_params.yaml" ns="local_costmap" />
+    </node>
+
+    <!-- Static transform between the world and map frames -->
+    <node pkg="tf2_ros" type="static_transform_publisher" name="world_to_map" args="0 0 0 0 0 0 world map" />
+
+    <!-- Robot state publisher -->
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" />
+
+    <!-- Parse the URDF model and store the result in the 'robot_description' parameter -->
+    <param name="robot_description" command="$(find xacro)/xacro '$(find igvc_perception)/urdf/mantis.urdf'" />
+
+    <!-- Statically set wheel TFs for Mantis RobotModel -->
+    <node pkg="tf2_ros" type="static_transform_publisher" name="left_wheel_to_body_link" args="0 0.29 0 0 1.5707 1.5707 body_link left_wheel" />
+    <node pkg="tf2_ros" type="static_transform_publisher" name="right_wheel_to_body_link" args="0 -0.29 0 0 1.5707 1.5707 body_link right_wheel" />
+
+    <!-- Camera processing node -->
+    <node pkg="igvc_perception" type="camera_processing_node" name="camera_processing_node" output="screen" />
+
+     <!-- Decompress image from bag file -->
+    <node pkg="image_transport" type="republish" name="republish" args="in:=/image compressed out:=/raw_image" />
+
+
+</launch>
