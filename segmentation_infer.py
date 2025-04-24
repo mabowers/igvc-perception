@@ -1,7 +1,11 @@
-# IGVC perception project
-# Mark Bowers
-# ECE5532 Autonomous Vehicle Systems I - Winter 2025
-# Oakland University
+# Copyright (c) 2025 Mark A. Bowers
+# All rights reserved.
+#
+# IGVC Perception Project
+# https://github.com/mabowers/igvc-perception
+# ECE5532 Autonomous Vehicle Systems I, Winter 2025
+# Oakland University, Rochester, MI
+# Instructor: Dr. Micho Radovnikovich
 #
 # This script reads the IGVC dataset images from img_resized and runs the YOLO11 segmentation network
 # to find objects in the scene (i.e. painted lines, generic barrels, traffic barrels, and grass.)
