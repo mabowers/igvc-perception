@@ -1,2 +1,3 @@
-# igvc-segmentation
-Segmentation network trained on OU IGVC 2014 images
+## IGVC Perception Project
+
+ROS-based perception system including instance segmentation network trained on the OU IGVC 2014 dataset
